@@ -1,11 +1,3 @@
-
-let userEntries = [];
-
-window.onload = function () {
-    userEntries = [];  
-    displayEntries(); 
-}
-
 function calculateAge(dob) {
     const birthDate = new Date(dob);
     const today = new Date();
@@ -24,7 +16,7 @@ document.getElementById('user-form').addEventListener('submit', function(event) 
     
     if (!dob) {
         errorMessage.textContent = "Please enter your date of birth.";
-        event.preventDefault();
+        event.preventDefault(); 
         return;
     }
 
@@ -32,14 +24,24 @@ document.getElementById('user-form').addEventListener('submit', function(event) 
 
     if (age < 18 || age > 55) {
         errorMessage.textContent = "Your age must be between 18 and 55 to register.";
-        event.preventDefault();
+        event.preventDefault(); 
     } else {
-        errorMessage.textContent = "";
+        errorMessage.textContent = ""; 
     }
 });
+const retrieveEntries = () => {
+    let entries = localStorage.getItem("user-entries");
+    if (entries) {
+        entries = JSON.parse(entries);
+    } else {
+        entries = [];
+    }
+    return entries;
+}
 
 const displayEntries = () => {
-    const tableEntries = userEntries.map((entry) => {
+    const entries = retrieveEntries();
+    const tableEntries = entries.map((entry) => {
         const nameCell = `<td class='border px-4 py-2'>${entry.name}</td>`;
         const emailCell = `<td class='border px-4 py-2'>${entry.email}</td>`;
         const passwordCell = `<td class='border px-4 py-2'>${entry.password}</td>`;
@@ -82,10 +84,12 @@ const saveUserForm = (event) => {
         acceptedTermsAndconditions
     };
     
-    userEntries.push(entry); 
-    displayEntries();       
-
-    document.getElementById('user-form').reset();
+    let userEntries = retrieveEntries();
+    userEntries.push(entry);
+    localStorage.setItem("user-entries", JSON.stringify(userEntries));
+    displayEntries();
 }
 
-document.getElementById('user-form').addEventListener('submit', saveUserForm);
+document.getElementById('user-form').addEventListener("submit", saveUserForm);
+
+displayEntries();
