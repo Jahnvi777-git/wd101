@@ -10,10 +10,7 @@ function calculateAge(dob) {
     return age;
 }
 
-function isValidEmail(email) {
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    return emailRegex.test(email);
-}
+
 
 document.getElementById('user-form').addEventListener('submit', function(event) {
     const dob = document.getElementById('dob').value;
@@ -26,11 +23,6 @@ document.getElementById('user-form').addEventListener('submit', function(event) 
         return;
     }
 
-    if (!isValidEmail(email)) {
-        errorMessage.textContent = "Please enter a valid email address.";
-        event.preventDefault();
-        return;
-    }
 
     const age = calculateAge(dob);
 
@@ -75,8 +67,8 @@ const displayEntries = () => {
             <th class="px-4 py-2">Name</th>
             <th class="px-4 py-2">Email</th>
             <th class="px-4 py-2">Password</th>
-            <th class="px-4 py-2">Date of Birth</th>
-            <th class="px-4 py-2">Accepted Terms?</th>
+            <th class="px-4 py-2">Dob</th>
+            <th class="px-4 py-2">Accepted terms?</th>
         </tr>
         ${tableEntries || ""}
     </table>`;
@@ -93,7 +85,7 @@ const saveUserForm = (event) => {
     const dob = document.getElementById("dob").value;
     const acceptedTermsAndconditions = document.getElementById("acceptTerms").checked;
     
-    if (!dob || !isValidEmail(email)) {
+    if (!dob) {
         return; 
     }
 
