@@ -29,7 +29,7 @@ function checkValidity(dob, email) {
 }
 
 const retrieveEntries = () => {
-    let entries = sessionStorage.getItem("userSessionEntries");
+    let entries = localStorage.getItem("userLocalEntries");
     if (entries) {
         entries = JSON.parse(entries);
     } else {
@@ -93,11 +93,10 @@ const saveUserForm = (event) => {
     
     let userEntries = retrieveEntries();
     userEntries.push(entry);
-    sessionStorage.setItem("userSessionEntries", JSON.stringify(userEntries));
+    localStorage.setItem("userLocalEntries", JSON.stringify(userEntries)); 
     displayEntries();
 }
 
 document.getElementById('user-form').addEventListener("submit", saveUserForm);
 
 displayEntries();
-
