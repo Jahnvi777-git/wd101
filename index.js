@@ -10,13 +10,25 @@ function calculateAge(dob) {
     return age;
 }
 
+function isValidEmail(email) {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
+}
+
 document.getElementById('user-form').addEventListener('submit', function(event) {
     const dob = document.getElementById('dob').value;
+    const email = document.getElementById('email').value;
     const errorMessage = document.getElementById('error-message');
     
     if (!dob) {
         errorMessage.textContent = "Please enter your date of birth.";
         event.preventDefault(); 
+        return;
+    }
+
+    if (!isValidEmail(email)) {
+        errorMessage.textContent = "Please enter a valid email address.";
+        event.preventDefault();
         return;
     }
 
@@ -59,15 +71,14 @@ const displayEntries = () => {
 
     const table = `
     <table class="table-auto w-full">
-        ${tableEntries.length > 0 ? `
-            <tr>
-                <th class="px-4 py-2">Name</th>
-                <th class="px-4 py-2">Email</th>
-                <th class="px-4 py-2">Password</th>
-                <th class="px-4 py-2">Date of Birth</th>
-                <th class="px-4 py-2">Accepted Terms?</th>
-            </tr>
-            ${tableEntries}` : ""}
+        <tr>
+            <th class="px-4 py-2">Name</th>
+            <th class="px-4 py-2">Email</th>
+            <th class="px-4 py-2">Password</th>
+            <th class="px-4 py-2">Date of Birth</th>
+            <th class="px-4 py-2">Accepted Terms?</th>
+        </tr>
+        ${tableEntries || ""}
     </table>`;
 
     document.getElementById("userEntries").innerHTML = table;
@@ -82,7 +93,7 @@ const saveUserForm = (event) => {
     const dob = document.getElementById("dob").value;
     const acceptedTermsAndconditions = document.getElementById("acceptTerms").checked;
     
-    if (!dob) {
+    if (!dob || !isValidEmail(email)) {
         return; 
     }
 
