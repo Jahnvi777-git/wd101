@@ -29,8 +29,9 @@ document.getElementById('user-form').addEventListener('submit', function(event) 
         errorMessage.textContent = ""; 
     }
 });
+
 const retrieveEntries = () => {
-    let entries = localStorage.getItem("user-entries");
+    let entries = sessionStorage.getItem("userSessionEntries");
     if (entries) {
         entries = JSON.parse(entries);
     } else {
@@ -41,7 +42,12 @@ const retrieveEntries = () => {
 
 const displayEntries = () => {
     const entries = retrieveEntries();
-    const tableEntries = entries.map((entry) => {
+    const validEntries = entries.filter((entry) => {
+        const age = calculateAge(entry.dob);
+        return age >= 18 && age <= 55;
+    });
+    
+    const tableEntries = validEntries.map((entry) => {
         const nameCell = `<td class='border px-4 py-2'>${entry.name}</td>`;
         const emailCell = `<td class='border px-4 py-2'>${entry.email}</td>`;
         const passwordCell = `<td class='border px-4 py-2'>${entry.password}</td>`;
@@ -53,18 +59,18 @@ const displayEntries = () => {
 
     const table = `
     <table class="table-auto w-full">
-        <tr>
-            <th class="px-4 py-2">Name</th>
-            <th class="px-4 py-2">Email</th>
-            <th class="px-4 py-2">Password</th>
-            <th class="px-4 py-2">Date of Birth</th>
-            <th class="px-4 py-2">Accepted Terms?</th>
-        </tr>
-        ${tableEntries}
+        ${tableEntries.length > 0 ? `
+            <tr>
+                <th class="px-4 py-2">Name</th>
+                <th class="px-4 py-2">Email</th>
+                <th class="px-4 py-2">Password</th>
+                <th class="px-4 py-2">Date of Birth</th>
+                <th class="px-4 py-2">Accepted Terms?</th>
+            </tr>
+            ${tableEntries}` : ""}
     </table>`;
 
-    let details = document.getElementById("user-entries");
-    details.innerHTML = table;
+    document.getElementById("userEntries").innerHTML = table;
 }
 
 const saveUserForm = (event) => {
@@ -76,6 +82,16 @@ const saveUserForm = (event) => {
     const dob = document.getElementById("dob").value;
     const acceptedTermsAndconditions = document.getElementById("acceptTerms").checked;
     
+    if (!dob) {
+        return; 
+    }
+
+    const age = calculateAge(dob);
+
+    if (age < 18 || age > 55) {
+        return; 
+    }
+    
     const entry = {
         name,
         email,
@@ -86,7 +102,7 @@ const saveUserForm = (event) => {
     
     let userEntries = retrieveEntries();
     userEntries.push(entry);
-    localStorage.setItem("user-entries", JSON.stringify(userEntries));
+    sessionStorage.setItem("userSessionEntries", JSON.stringify(userEntries));
     displayEntries();
 }
 
