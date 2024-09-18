@@ -10,29 +10,23 @@ function calculateAge(dob) {
     return age;
 }
 
-
-
-document.getElementById('user-form').addEventListener('submit', function(event) {
-    const dob = document.getElementById('dob').value;
-    const email = document.getElementById('email').value;
-    const errorMessage = document.getElementById('error-message');
+function checkValidity(dob, email) {
+    const emailPattern = /^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$/;
     
-    if (!dob) {
-        errorMessage.textContent = "Please enter your date of birth.";
-        event.preventDefault(); 
-        return;
+    if (!emailPattern.test(email)) {
+        alert('Please enter a valid email address.');
+        return false;
     }
-
-
+    
     const age = calculateAge(dob);
-
+    
     if (age < 18 || age > 55) {
-        errorMessage.textContent = "Your age must be between 18 and 55 to register.";
-        event.preventDefault(); 
-    } else {
-        errorMessage.textContent = ""; 
+        alert('Your age must be between 18 and 55 to register.');
+        return false;
     }
-});
+
+    return true;
+}
 
 const retrieveEntries = () => {
     let entries = sessionStorage.getItem("userSessionEntries");
@@ -67,8 +61,8 @@ const displayEntries = () => {
             <th class="px-4 py-2">Name</th>
             <th class="px-4 py-2">Email</th>
             <th class="px-4 py-2">Password</th>
-            <th class="px-4 py-2">Dob</th>
-            <th class="px-4 py-2">Accepted terms?</th>
+            <th class="px-4 py-2">Date of Birth</th>
+            <th class="px-4 py-2">Accepted Terms?</th>
         </tr>
         ${tableEntries || ""}
     </table>`;
@@ -78,20 +72,14 @@ const displayEntries = () => {
 
 const saveUserForm = (event) => {
     event.preventDefault();
-    
+
     const name = document.getElementById("name").value;
     const email = document.getElementById("email").value;
     const password = document.getElementById("password").value;
     const dob = document.getElementById("dob").value;
     const acceptedTermsAndconditions = document.getElementById("acceptTerms").checked;
-    
-    if (!dob) {
-        return; 
-    }
 
-    const age = calculateAge(dob);
-
-    if (age < 18 || age > 55) {
+    if (!checkValidity(dob, email)) {
         return; 
     }
     
@@ -112,3 +100,4 @@ const saveUserForm = (event) => {
 document.getElementById('user-form').addEventListener("submit", saveUserForm);
 
 displayEntries();
+
